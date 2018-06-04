@@ -26,6 +26,7 @@ myApp.factory("bookService",function(){
 		binding: "Paperback",
 		publisher: "Random House India",
 		releaseDate: "12-08-2014",
+		addToKart:false,
 		details: "Linda, in her thirties, begins to question the routine and predictability of her days. In everybodys eyes, she has a perfect life-happy marriage, children and a career. Yet what she feels is an eno... View More"
 	},
 	{
@@ -33,6 +34,7 @@ myApp.factory("bookService",function(){
 		name: "Geronimo Stilton Spacemice#2 : You're Mine, Captain!",
 		price: 168,
 		rating: 5,
+		addToKart:false,
 		binding: "Paperback",
 		publisher: "Scholastic",
 		releaseDate: "01-07-2014",
@@ -43,6 +45,7 @@ myApp.factory("bookService",function(){
 		name: "Life or Death",
 		price: 339,
 		rating: 4,
+		addToKart:false,
 		binding: "Paperback",
 		publisher: "Hachette India",
 		releaseDate: "01-04-2014",
@@ -53,6 +56,7 @@ myApp.factory("bookService",function(){
 		name: "Playing It My Way : My Autobiography",
 		price: 599,
 		rating: 5,
+		addToKart:false,
 		binding: "Hardcover",
 		publisher: "Hodder & Stoughton",
 		releaseDate: "01-08-2014",
@@ -62,6 +66,7 @@ myApp.factory("bookService",function(){
 		imgUrl: "the-fault.jpeg",
 		name: "The Fault in Our Stars",
 		price: 227,
+		addToKart:false,
 		rating: 4.5,
 		binding: "Paperback",
 		publisher: "Penguin Books Ltd",
@@ -73,6 +78,7 @@ myApp.factory("bookService",function(){
 		name: "Wings of Fire: An Autobiography",
 		price: 124,
 		rating: 5,
+		addToKart:false,
 		binding: "Paperback",
 		publisher: "Universities Press",
 		releaseDate: "25-08-2000",
@@ -84,7 +90,14 @@ myApp.factory("bookService",function(){
 
 	var service = {
 		pushToKart: function pushToKart(book){
-			kart.push(book);
+			var id = kart.indexOf(book);
+			var book_index = books.indexOf(book);
+			if(id == -1)
+			{
+				book.addToKart = true
+				books[book_index].addToKart = true
+				kart.push(book);
+			}
 		},
 	
 		pushToBook:function pushToBook(book){
@@ -98,7 +111,15 @@ myApp.factory("bookService",function(){
 	
 		getKart:function getKart(){
 			return kart;
-		}	
+		},
+
+		removeFromKart : function removeFromKart(book){
+			var book_index = books.indexOf(book);
+			var kart_index = kart.indexOf(book);
+			book.addToKart = false
+			books[book_index].addToKart = false
+			kart.splice(kart_index,1);
+		}
 	}
 
 	
@@ -136,7 +157,15 @@ myApp.controller("BookListCtrl", function($scope, bookService) {
 	
 	$scope.addToKart = function(book) {
 		bookService.pushToKart(book);
+		var index = $scope.books.indexOf(book)
+		$scope.books[index].addToKart = true
 		console.log("add to kart: ", book);
+	}
+
+	$scope.removeFromKart = function(book){
+		bookService.removeFromKart(book)
+		var index = $scope.books.indexOf(book)
+		$scope.books[index].addToKart = false
 	}
 });
 
@@ -146,6 +175,8 @@ myApp.controller("KartListCtrl",function($scope,bookService){
 
 
 	$scope.buy = function(book){
-		console.log("buy", book)
+		bookService.removeFromKart(book)
+		// var index = $scope.kart.indexOf(book)
+		// $scope.kart.splice(index,1)
 	}
 })
